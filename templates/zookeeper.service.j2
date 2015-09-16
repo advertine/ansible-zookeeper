@@ -4,10 +4,12 @@
 Description=ZooKeeper
 
 [Service]
-Type=simple
+EnvironmentFile=/etc/sysconfig/zookeeper
+Type=forking
 User=zookeeper
 Group=zookeeper
-ExecStart={{zookeeper_dir}}/bin/zkServer.sh start-foreground
+ExecStart={{zookeeper_dir}}/bin/zkServer.sh start
+Restart=on-failure
 
 TimeoutSec=300
 

@@ -30,6 +30,14 @@
   file: path={{log_dir}} state=directory recurse=yes owner=zookeeper group=zookeeper
   tags: bootstrap
 
+- name: Create zookeeper conf folder.
+  file: path={{conf_dir}} state=directory recurse=yes owner=zookeeper group=zookeeper
+  tags: bootstrap
+
+- name: Create zookeeper run folder.
+  file: path={{pid_dir}} state=directory recurse=yes owner=zookeeper group=zookeeper
+  tags: bootstrap
+
 - name: Check if /etc/init exists
   stat: path=/etc/init/
   register: etc_init
@@ -52,6 +60,12 @@
   notify:
     - Restart zookeeper
 
+- name: sysconfig file
+  template: src=zookeeper.sysconfig.j2 dest=/etc/sysconfig/zookeeper
+  tags: deploy
+  notify:
+    - Restart zookeeper
+
 - name: Write myid file.
   template: src=myid.j2 dest={{data_dir}}/myid owner=zookeeper group=zookeeper
   tags: deploy
@@ -59,10 +73,13 @@
     - Restart zookeeper
 
 - name: Configure zookeeper
-  template: src=zoo.cfg.j2 dest={{ zookeeper_dir }}/conf/zoo.cfg owner=zookeeper group=zookeeper
+  template: src={{item}}.j2 dest={{conf_dir}}/{{item}} owner=zookeeper group=zookeeper
   tags: deploy
   notify:
     - Restart zookeeper
+  with_items:
+    - zoo.cfg
+    - log4j.properties
 
 - name: Start zookeeper
   service: name=zookeeper state=started

@@ -9,13 +9,13 @@ client_port: 2181
 init_limit: 5
 sync_limit: 2
 tick_time: 2000
+max_client_connections: 60
 zoo_id: 1
-data_dir: /var/lib/zookeeper
+data_dir: /var/lib/zookeeper/data
+data_log_dir: "{{ data_dir }}"
 log_dir: /var/log/zookeeper
 zookeeper_dir: /opt/zookeeper-{{zookeeper_version}}
+conf_dir: /etc/zookeeper/conf
+pid_dir: /var/run/zookeeper
 
-# List of dict (i.e. {zookeeper_hosts:[{host:,id:},{host:,id:},...]})
-zookeeper_hosts:
-  - host: "{{inventory_hostname}}" # the machine running 
-    id: 1
 
